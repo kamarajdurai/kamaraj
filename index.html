@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Kamaraj's Portfolio</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Montserrat:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="color.css">
+</head>
+<body>
+  <header>
+    <div class="nav-inner container">
+      <div class="brand">
+        <h1>Kamaraj</h1>
+      </div>
+      <nav>
+        <a href="#home" class="nav-link active">Home</a>
+        <a href="#about" class="nav-link">About</a>
+        <a href="#projects" class="nav-link">Projects</a>
+        <a href="#contact" class="nav-link">Contact</a>
+      </nav>
+      <button class="hamburger" aria-label="menu" aria-expanded="false">☰</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <section id="home" class="hero">
+      <canvas id="particle-canvas"></canvas>
+      <div class="hero-inner">
+        <div class="profile card fade-in">
+          <img src="./pic/Kamaraj.jpg" alt="Profile">
+        </div>
+        <div class="hero-text">
+          <h2 class="fade-in">Hi — I'm <strong>Kamaraj</strong></h2>
+          <!--<div class="tagline fade-in"><span id="typed-target">Designing delightful experiences</span></div>-->
+          <p class="fade-in" style="color:#cfcfe8">A college student passionate about web development, UI/UX and building projects that blend design with clean code.</p>
+          <div class="cta-row fade-in" style="margin-top:16px">
+            <a class="btn pulse" href="./file/resume.pdf" download>
+            <span>⬇</span> Download Resume
+              </a>
+
+            <a class="btn ghost" href="#projects">View Projects</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="about">
+      <h3 class="section-title">About & Education</h3>
+      <div class="two-col">
+        <div class="card fade-in">
+          <h4>About me</h4>
+          <p>I am a college student studying Computer Science. I enjoy building web apps, designing UIs and learning new technologies. I focus on writing maintainable code and creating pleasant UX.</p>
+          <p style="margin-top:14px">Skills: HTML, CSS, JavaScript, Python, React (learning), Responsive Design, Git</p>
+        </div>
+        <div class="card fade-in edu-journey">
+          <h4>Education (Journey)</h4>
+          <div class="edu-item">
+            <div class="icon">🎓</div>
+            <div>
+              <h4>B.Sc. Computer Science — XYZ College <small style="color:#bfbfe6">(2022 - present)</small></h4>
+              <p>Focus: Web Development, Data Structures, and Algorithms. Active member of the Coding Club.</p>
+            </div>
+          </div>
+          <div class="edu-item">
+            <div class="icon">📜</div>
+            <div>
+              <h4>Higher Secondary — ABC School <small style="color:#bfbfe6">(2020 - 2022)</small></h4>
+              <p>Focus: Mathematics & Computer Science. Ranked top 10 in class.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:18px">
+        <h4 class="section-title">Skills</h4>
+        <div class="card">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;flex-wrap:wrap">
+            <h4 style="margin:0"> My Skills</h4>
+          </div>
+          <div class="tabs" role="tablist" style="margin-bottom:14px">
+            <div class="tab active" data-tab="frontend" role="tab" aria-selected="true">Frontend</div>
+            <div class="tab" data-tab="backend" role="tab">Backend</div>
+            <div class="tab" data-tab="tools" role="tab">Tools</div>
+          </div>
+          <div class="skill-area">
+            <div class="skill-grid" data-panel="frontend">
+              <div class="skill" title="HTML ">
+                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg" alt="HTML" style="width:36px;height:36px">
+                <div class="meta"><strong>HTML</strong><div style="font-size:12px;color:#cfcfe8"></div></div>
+              </div>
+              <div class="skill" title="CSS ">
+                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg" alt="CSS" style="width:36px;height:36px">
+                <div class="meta"><strong>CSS</strong><div style="font-size:12px;color:#cfcfe8"></div></div>
+              </div>
+              <div class="skill" title="JavaScript ">
+                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" alt="JS" style="width:36px;height:36px">
+                <div class="meta"><strong>JS</strong><div style="font-size:12px;color:#cfcfe8"></div></div>
+              </div>
+              <div class="skill" title="React">
+                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" alt="React" style="width:36px;height:36px">
+                <div class="meta"><strong>React</strong><div style="font-size:12px;color:#cfcfe8"></div></div>
+              </div>
+            </div>
+
+            <div class="skill-grid" data-panel="backend" style="display:none">
+              <div class="skill" title="PHP ">
+                <img src="https://devicon-website.vercel.app/api/php/original.svg" alt="PHP" style="width:36px;height:36px">
+                <div class="meta"><strong>PHP</strong><div style="font-size:12px;color:#cfcfe8"></div></div>
+              </div>
+              <div class="skill" title="Node.js">
+                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" alt="Node.js" style="width:36px;height:36px">
+                <div class="meta"><strong>Node.js</strong><div style="font-size:12px;color:#cfcfe8"></div></div>
+              </div>
+              <div class="skill" title="MySQL ">
+                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg" alt="MySQL" style="width:36px;height:36px">
+                <div class="meta"><strong>MySQL</strong><div style="font-size:12px;color:#cfcfe8"></div></div>
+              </div>
+            </div>
+
+            <div class="skill-grid" data-panel="tools" style="display:none">
+              <div class="skill" title="Git ">
+                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg" alt="Git" style="width:36px;height:36px">
+                <div class="meta"><strong>Git</strong><div style="font-size:12px;color:#cfcfe8"></div></div>
+              </div>
+              <div class="skill" title="GitHub ">
+                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" alt="GitHub" style="width:36px;height:36px">
+                <div class="meta"><strong>GitHub</strong><div style="font-size:12px;color:#cfcfe8"></div></div>
+              </div>
+              <div class="skill" title="VS Code">
+                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vscode/vscode-original.svg" alt="VS Code" style="width:36px;height:36px">
+                <div class="meta"><strong>VS Code</strong><div style="font-size:12px;color:#cfcfe8"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+   <section id="projects">
+  <h3 class="section-title">Projects</h3>
+  <div class="projects-grid">
+    <article class="project-card fade-in">
+      <div class="project-thumb">
+        <img src="./pic/vr.png" alt="Quiz App" style="width:100%; height:100%; object-fit:cover;">
+      </div>
+      <div class="project-body">
+        <h4>Travel and Tourism</h4>
+        <p>Travel and tourism platform for viewing places in VA/AR.</p>
+        <a class="btn ghost" href="../pic/vr.png">View</a>
+      </div>
+    </article>
+
+    <article class="project-card fade-in">
+      <div class="project-thumb">
+        <img src="./pic/harb.png" alt="Portfolio Site" style="width:100%; height:100%; object-fit:cover;">
+      </div>
+      <div class="project-body">
+        <h4>Herbious</h4>
+        <p>Herbious for learn  herbs and  we can see plants in VR view.</p>
+        <a class="btn ghost" href="#">View</a>
+      </div>
+    </article>
+
+    <article class="project-card fade-in">
+      <div class="project-thumb">
+        <img src="./pic/job.png" alt="Task Manager" style="width:100%; height:100%; object-fit:cover;">
+      </div>
+      <div class="project-body">
+        <h4>Job Portal</h4>
+        <p>Job portal for finding jobs and applying for jobs.</p>
+        <a class="btn ghost" href="#">View</a>
+      </div>
+    </article>
+  </div>
+</section>
+<section id="contact">
+      <h3 class="section-title">Contact</h3>
+      <div class="card">
+        <form id="contact-form">
+          <input type="text" name="name" placeholder="Your name" required />
+          <input type="email" name="email" placeholder="Your email" required />
+          <input type="text" name="subject" placeholder="Subject" />
+          <textarea name="message" placeholder="Your message" required></textarea>
+          <button class="btn" type="submit">Send Message</button>
+        </form>
+      </div>
+    </section>
+  </main>
+  
+  <script src="main.js"></script>
+</body>
+</html>
