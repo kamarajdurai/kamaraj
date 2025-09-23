@@ -406,25 +406,20 @@ h3.section-title {
     padding-left: 36px;
     margin-top: 0;
 }
-/* Style for the image inside the achievement bar */
 .achievement-bar .content img {
     width: 100%;
+    height: auto; /* Ensures the height adjusts to the width */
     border-radius: 8px;
-    margin-bottom: 12px; /* Adds space between the image and the text */
-    object-fit: cover;
-}
-/* State when the bar is open - UPDATED */
-.achievement-bar.open .content {
-    max-height: 500px; /* Increased from 200px to fit the image */
-    margin-top: 12px;
-    transition: max-height 0.5s ease-in, margin-top 0.5s ease-in;
+    margin-bottom: 12px;
+    object-fit: contain; /* Prevents the image from being cut off */
 }
 
-/* State when the bar is open */
+
 .achievement-bar.open .content {
-    max-height: 200px; /* Adjust if content is taller */
+    /* Set a very large max-height to ensure the full image is visible */
+    max-height: 2000px; 
     margin-top: 12px;
-    transition: max-height 0.5s ease-in, margin-top 0.5s ease-in;
+    transition: max-height 0.8s ease-in-out, margin-top 0.5s ease-in;
 }
 /* ========== END: ACHIEVEMENTS SECTION STYLES ========== */
 
