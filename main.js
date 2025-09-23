@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(tick, 30);
       }
     }
-    tick();
+    // tick(); // Commented out as #typed-target is not in the HTML
   })();
 
   // Fade-in observer
@@ -84,6 +84,20 @@ document.addEventListener('DOMContentLoaded', () => {
       p.style.display = (p.dataset.panel === sel) ? 'grid' : 'none';
     });
   }));
+
+  // ========== START: ACHIEVEMENTS ACCORDION LOGIC ==========
+  $$('.achievement-bar').forEach(bar => {
+    bar.addEventListener('click', () => {
+      bar.classList.toggle('open');
+      const toggle = bar.querySelector('.toggle');
+      if (bar.classList.contains('open')) {
+        toggle.textContent = '−'; // Use a minus sign when open
+      } else {
+        toggle.textContent = '+';
+      }
+    });
+  });
+  // ========== END: ACHIEVEMENTS ACCORDION LOGIC ==========
 
   // Contact form demo
   const contactForm = $('#contact-form');

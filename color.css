@@ -354,6 +354,80 @@ h3.section-title {
   padding: 12px
 }
 
+/* ========== START: ACHIEVEMENTS SECTION STYLES ========== */
+.achievements-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px; /* Adjust this value to change the spacing between bars */
+}
+
+.achievement-bar {
+    background: linear-gradient(90deg, #4a6bff, #b13efc);
+    border-radius: 12px;
+    padding: 16px 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 6px 18px rgba(123, 47, 247, 0.15);
+}
+
+.achievement-bar:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(123, 47, 247, 0.25);
+}
+
+.achievement-bar .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.achievement-bar .header .icon {
+    margin-right: 12px;
+}
+
+.achievement-bar .header .title {
+    flex-grow: 1;
+}
+
+.achievement-bar .header .toggle {
+    font-size: 24px;
+    font-weight: 300;
+}
+
+.achievement-bar .content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease-out, padding-top 0.4s ease-out;
+    color: #cfcfe8;
+    font-size: 0.9rem;
+    padding-left: 36px;
+    margin-top: 0;
+}
+/* Style for the image inside the achievement bar */
+.achievement-bar .content img {
+    width: 100%;
+    border-radius: 8px;
+    margin-bottom: 12px; /* Adds space between the image and the text */
+    object-fit: cover;
+}
+/* State when the bar is open - UPDATED */
+.achievement-bar.open .content {
+    max-height: 500px; /* Increased from 200px to fit the image */
+    margin-top: 12px;
+    transition: max-height 0.5s ease-in, margin-top 0.5s ease-in;
+}
+
+/* State when the bar is open */
+.achievement-bar.open .content {
+    max-height: 200px; /* Adjust if content is taller */
+    margin-top: 12px;
+    transition: max-height 0.5s ease-in, margin-top 0.5s ease-in;
+}
+/* ========== END: ACHIEVEMENTS SECTION STYLES ========== */
+
 /* Contact */
 form {
   display: grid;
@@ -460,10 +534,4 @@ footer {
   100% {
     transform: scale(1)
   }
-}
-/* Your Custom CSS */
-.achievement .content {
-    max-height: 0;
-    overflow: hidden;
-    transition: all 0.5s ease-in-out;
 }
