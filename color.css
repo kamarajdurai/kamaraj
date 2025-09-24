@@ -358,7 +358,7 @@ h3.section-title {
 .achievements-container {
     display: flex;
     flex-direction: column;
-    gap: 16px; /* Adjust this value to change the spacing between bars */
+    gap: 16px;
 }
 
 .achievement-bar {
@@ -366,14 +366,15 @@ h3.section-title {
     border-radius: 12px;
     padding: 16px 20px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.25, 1, 0.3, 1); /* smoother easing */
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 6px 18px rgba(123, 47, 247, 0.15);
+    overflow: hidden;
 }
 
 .achievement-bar:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 10px 25px rgba(123, 47, 247, 0.25);
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 12px 28px rgba(123, 47, 247, 0.35);
 }
 
 .achievement-bar .header {
@@ -395,33 +396,45 @@ h3.section-title {
 .achievement-bar .header .toggle {
     font-size: 24px;
     font-weight: 300;
+    transition: transform 0.4s ease;
+}
+
+/* rotate toggle smoothly */
+.achievement-bar.open .header .toggle {
+    transform: rotate(180deg);
 }
 
 .achievement-bar .content {
     max-height: 0;
+    opacity: 0;
     overflow: hidden;
-    transition: max-height 0.4s ease-out, padding-top 0.4s ease-out;
+    transition: 
+      max-height 0.6s ease-in-out, 
+      opacity 0.5s ease-in-out, 
+      margin-top 0.4s ease-in-out,
+      padding 0.4s ease-in-out;
     color: #cfcfe8;
     font-size: 0.9rem;
     padding-left: 36px;
     margin-top: 0;
 }
+
 .achievement-bar .content img {
     width: 100%;
-    height: auto; /* Ensures the height adjusts to the width */
+    height: auto;
     border-radius: 8px;
     margin-bottom: 12px;
-    object-fit: contain; /* Prevents the image from being cut off */
+    object-fit: contain;
 }
-
 
 .achievement-bar.open .content {
-    /* Set a very large max-height to ensure the full image is visible */
-    max-height: 2000px; 
+    max-height: 2000px;
+    opacity: 1;
     margin-top: 12px;
-    transition: max-height 0.8s ease-in-out, margin-top 0.5s ease-in;
+    padding-top: 8px;
 }
 /* ========== END: ACHIEVEMENTS SECTION STYLES ========== */
+
 
 /* Contact */
 form {
