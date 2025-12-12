@@ -205,10 +205,12 @@ function App() {
           <canvas id="particle-canvas" ref={canvasRef}></canvas>
           <div className="hero-inner">
             <div
-              className="profile card fade-in"
+              className="fade-in"
               style={{ transform: `translateY(${scrollY * 0.15}px)` }}
             >
-              <img src="/pic/kamaraj.jpg" alt="Profile" />
+              <TiltCard className="profile card">
+                <img src="/pic/kamaraj.jpg" alt="Profile" />
+              </TiltCard>
             </div>
             <div
               className="hero-text"
