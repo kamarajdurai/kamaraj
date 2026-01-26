@@ -182,6 +182,63 @@ function App() {
   // Achievement Accordion
 
 
+  // Projects Data
+  const projects = [
+    {
+      id: 1,
+      title: 'Travel and Tourism',
+      description: 'Travel and tourism platform for viewing places in VA/AR.',
+      details: 'An immersive travel experience allowing users to explore destinations through Virtual and Augmented Reality. Features include 360-degree views, interactive guides, and seamless booking integration.',
+      img: '/pic/vr.png',
+      link: 'https://tripplanner-amber.vercel.app/',
+      images: [
+        '/pic/vr.png',
+        '/pic/plan.png', // Placeholder, using other project images as requested
+        '/pic/view.png',
+        '/pic/ar.jpeg'
+      ]
+    },
+    {
+      id: 2,
+      title: 'Herbious',
+      description: 'Herbious for learn herbs and we can see plants in VR view.',
+      details: 'Educational platform dedicated to medicinal herbs. Users can visualize plants in 3D/VR, learn about their properties, and identify them using AI-powered image recognition.',
+      img: '/pic/harb.png',
+      link: 'https://herbours.netlify.app/',
+      images: [
+        '/pic/harb.png',
+        '/pic/plant.png',
+        '/pic/lotus.png',
+        '/pic/3D.png'
+      ]
+    },
+    {
+      id: 3,
+      title: 'Job Portal',
+      description: 'Job portal for finding jobs and applying for jobs.',
+      details: 'A comprehensive job search engine connecting seekers with employers. Features include resume parsing, smart matching algorithms, and real-time application tracking.',
+      img: '/pic/job.png',
+      link: 'https://jobbd.netlify.app/',
+      images: [
+        '/pic/job.png',
+        '/pic/vr.png',
+        '/pic/harb.png',
+        '/pic/google.jpg'
+      ]
+    }
+  ];
+
+  const [selectedProject, setSelectedProject] = useState(null);
+
+  // Close modal on escape key
+  useEffect(() => {
+    const handleEsc = (e) => {
+      if (e.key === 'Escape') setSelectedProject(null);
+    };
+    window.addEventListener('keydown', handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
+  }, []);
+
   return (
     <>
       <header>
@@ -220,15 +277,6 @@ function App() {
               <p className="fade-in" style={{ color: '#cfcfe8' }}>
                 {typedText || "A college student passionate about web development, UI/UX and building projects that blend design with clean code."}
               </p>
-              {/* Note: The typed text was in JS but not in HTML snippet. I added it here conditionally or replacing static text if desired. 
-                   The original HTML had static text. The JS had logic for #typed-target but it was commented out in the JS snippet provided!
-                   "// tick(); // Commented out as #typed-target is not in the HTML"
-                   So I will leave the static text and maybe add the typed effect if the user wants it, or just leave it as static.
-                   I'll leave the static text as primary and maybe append typed text if I find where it goes.
-                   Actually, the JS said `$('#typed-target')` which wasn't in HTML. 
-                   I'll stick to the static text from HTML for now to be safe.
-               */}
-              {/* <p className="fade-in" style={{color:'#cfcfe8'}}>A college student passionate about web development, UI/UX and building projects that blend design with clean code.</p> */}
 
               <div className="cta-row fade-in" style={{ marginTop: '16px' }}>
                 <a className="btn pulse" href="/file/resume.pdf" download>
@@ -379,38 +427,21 @@ function App() {
         <section id="projects">
           <h3 className="section-title">Projects</h3>
           <div className="projects-grid">
-            <TiltCard className="project-card fade-in">
-              <div className="project-thumb">
-                <img src="/pic/vr.png" alt="Quiz App" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-              </div>
-              <div className="project-body">
-                <h4>Travel and Tourism</h4>
-                <p>Travel and tourism platform for viewing places in VA/AR.</p>
-                <a className="btn ghost" href="https://tripplanner-amber.vercel.app/">View</a>
-              </div>
-            </TiltCard>
-
-            <TiltCard className="project-card fade-in">
-              <div className="project-thumb">
-                <img src="/pic/harb.png" alt="Portfolio Site" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-              </div>
-              <div className="project-body">
-                <h4>Herbious</h4>
-                <p>Herbious for learn herbs and we can see plants in VR view.</p>
-                <a className="btn ghost" href="https://herbours.netlify.app/">View</a>
-              </div>
-            </TiltCard>
-
-            <TiltCard className="project-card fade-in">
-              <div className="project-thumb">
-                <img src="/pic/job.png" alt="Task Manager" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-              </div>
-              <div className="project-body">
-                <h4>Job Portal</h4>
-                <p>Job portal for finding jobs and applying for jobs.</p>
-                <a className="btn ghost" href="https://jobbd.netlify.app/">View</a>
-              </div>
-            </TiltCard>
+            {projects.map((project) => (
+              <TiltCard key={project.id} className="project-card fade-in">
+                <div className="project-thumb">
+                  <img src={project.img} alt={project.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                </div>
+                <div className="project-body">
+                  <h4>{project.title}</h4>
+                  <p>{project.description}</p>
+                  <div style={{ display: 'flex', gap: '10px', marginTop: 'auto' }}>
+                    <a className="btn ghost" href={project.link} target="_blank" rel="noopener noreferrer">App</a>
+                    <button className="btn ghost" onClick={() => setSelectedProject(project)}>Details</button>
+                  </div>
+                </div>
+              </TiltCard>
+            ))}
           </div>
         </section>
 
@@ -431,6 +462,26 @@ function App() {
       <footer>
         <p>© 2025 Kamaraj. All rights reserved.</p>
       </footer>
+
+      {/* Project Details Modal */}
+      {selectedProject && (
+        <div className="modal-overlay" onClick={() => setSelectedProject(null)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <button className="modal-close" onClick={() => setSelectedProject(null)}>×</button>
+            <h3 style={{ marginTop: 0 }}>{selectedProject.title}</h3>
+            <p style={{ color: 'var(--accent1)', marginBottom: '16px' }}><strong>{selectedProject.description}</strong></p>
+            <p style={{ marginBottom: '24px', lineHeight: '1.6' }}>{selectedProject.details}</p>
+
+            <div className="modal-gallery">
+              {selectedProject.images.map((img, idx) => (
+                <div key={idx} className="gallery-item">
+                  <img src={img} alt={`${selectedProject.title} - ${idx + 1}`} />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
