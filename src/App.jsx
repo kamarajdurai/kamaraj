@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import './index.css';
+import TiltCard from './TiltCard';
 
 function App() {
   const [isNavOpen, setIsNavOpen] = useState(false);
@@ -7,6 +8,7 @@ function App() {
   const [isDark, setIsDark] = useState(true);
   const [typedText, setTypedText] = useState('');
   const [activeSection, setActiveSection] = useState('home');
+  const [scrollY, setScrollY] = useState(0);
 
   // Refs
   const canvasRef = useRef(null);
@@ -14,6 +16,15 @@ function App() {
 
   // Toggle Nav
   const toggleNav = () => setIsNavOpen(!isNavOpen);
+
+  // Scroll Parallax
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrollY(window.scrollY);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Dark Mode Toggle
   useEffect(() => {
@@ -193,10 +204,18 @@ function App() {
         <section id="home" className="hero">
           <canvas id="particle-canvas" ref={canvasRef}></canvas>
           <div className="hero-inner">
-            <div className="profile card fade-in">
-              <img src="/pic/kamaraj.jpg" alt="Profile" />
+            <div
+              className="fade-in"
+              style={{ transform: `translateY(${scrollY * 0.15}px)` }}
+            >
+              <TiltCard className="profile card">
+                <img src="/pic/kamaraj.jpg" alt="Profile" />
+              </TiltCard>
             </div>
-            <div className="hero-text">
+            <div
+              className="hero-text"
+              style={{ transform: `translateY(${scrollY * 0.05}px)` }}
+            >
               <h2 className="fade-in">Hi — I'm <strong>Kamaraj</strong></h2>
               <p className="fade-in" style={{ color: '#cfcfe8' }}>
                 {typedText || "A college student passionate about web development, UI/UX and building projects that blend design with clean code."}
@@ -341,7 +360,7 @@ function App() {
                 desc: 'Co-authored a research paper titled "The Impact of Asynchronous JavaScript on Modern Web Performance," published in the National Conference on Emerging Computer Technologies.'
               }
             ].map((item, index) => (
-              <article key={index} className="project-card fade-in">
+              <TiltCard key={index} className="project-card fade-in">
                 <div className="project-thumb" style={{ height: '200px', background: 'transparent' }}>
                   <img src={item.img} alt={item.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 </div>
@@ -352,7 +371,7 @@ function App() {
                   </div>
                   <p>{item.desc}</p>
                 </div>
-              </article>
+              </TiltCard>
             ))}
           </div>
         </section>
@@ -360,7 +379,7 @@ function App() {
         <section id="projects">
           <h3 className="section-title">Projects</h3>
           <div className="projects-grid">
-            <article className="project-card fade-in">
+            <TiltCard className="project-card fade-in">
               <div className="project-thumb">
                 <img src="/pic/vr.png" alt="Quiz App" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               </div>
@@ -369,9 +388,9 @@ function App() {
                 <p>Travel and tourism platform for viewing places in VA/AR.</p>
                 <a className="btn ghost" href="https://mytrip-kohl.vercel.app/">View</a>
               </div>
-            </article>
+            </TiltCard>
 
-            <article className="project-card fade-in">
+            <TiltCard className="project-card fade-in">
               <div className="project-thumb">
                 <img src="/pic/harb.png" alt="Portfolio Site" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               </div>
@@ -380,9 +399,9 @@ function App() {
                 <p>Herbious for learn herbs and we can see plants in VR view.</p>
                 <a className="btn ghost" href="https://herbours.netlify.app/">View</a>
               </div>
-            </article>
+            </TiltCard>
 
-            <article className="project-card fade-in">
+            <TiltCard className="project-card fade-in">
               <div className="project-thumb">
                 <img src="/pic/job.png" alt="Task Manager" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               </div>
@@ -391,7 +410,7 @@ function App() {
                 <p>Job portal for finding jobs and applying for jobs.</p>
                 <a className="btn ghost" href="https://jobbd.netlify.app/">View</a>
               </div>
-            </article>
+            </TiltCard>
           </div>
         </section>
 
