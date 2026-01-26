@@ -188,7 +188,8 @@ function App() {
       id: 1,
       title: 'Travel and Tourism',
       description: 'Travel and tourism platform for viewing places in VA/AR.',
-      details: 'An immersive travel experience allowing users to explore destinations through Virtual and Augmented Reality. Features include 360-degree views, interactive guides, and seamless booking integration.',
+      details: 'TN-VERSE is a smart tourism platform that combines education, safety, accessibility, and sustainability using AR/VR and intelligent recommendations to enhance the overall travel experience.  ',
+      Tech: 'Tech Stack: React , APIs-Gemini api , google map api ',
       img: '/pic/vr.png',
       link: 'https://tripplanner-amber.vercel.app/',
       images: [
@@ -202,7 +203,8 @@ function App() {
       id: 2,
       title: 'Herbious',
       description: 'Herbious for learn herbs and we can see plants in VR view.',
-      details: 'Educational platform dedicated to medicinal herbs. Users can visualize plants in 3D/VR, learn about their properties, and identify them using AI-powered image recognition.',
+      details: 'Developing a web application for exploring medicinal plants and promoting health literacy',
+      Tech:'Tech Stack: HTML ,CSS, JS,PHP and MySQL',
       img: '/pic/harb.png',
       link: 'https://herbours.netlify.app/',
       images: [
@@ -468,9 +470,10 @@ function App() {
         <div className="modal-overlay" onClick={() => setSelectedProject(null)}>
           <div className="modal-content" onClick={e => e.stopPropagation()}>
             <button className="modal-close" onClick={() => setSelectedProject(null)}>×</button>
-            <h3 style={{ marginTop: 0 }}>{selectedProject.title}</h3>
-            <p style={{ color: 'var(--accent1)', marginBottom: '16px' }}><strong>{selectedProject.description}</strong></p>
-            <p style={{ marginBottom: '24px', lineHeight: '1.6' }}>{selectedProject.details}</p>
+            <h3 style={{ marginTop: 0, marginBottom: '8px' }}>{selectedProject.title}</h3>
+            <p style={{ color: 'var(--accent1)', marginBottom: '8px' }}><strong>{selectedProject.description}</strong></p>
+            <p style={{ marginBottom: '12px', lineHeight: '1.6' }}>{selectedProject.details}</p>
+            {selectedProject.Tech && <p style={{ marginBottom: '12px', color: '#cfcfe8' }}>{selectedProject.Tech}</p>}
 
             <div className="modal-gallery">
               {selectedProject.images.map((img, idx) => (
