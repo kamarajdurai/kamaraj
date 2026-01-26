@@ -337,7 +337,7 @@ function App() {
               {
                 icon: '🌍',
                 title: 'Research Paper Published',
-                img: 'https://placehold.co/600x300/6A5ACD/FFFFFF?text=Research+Paper',
+                img: 'pic/google.jpg',
                 desc: 'Co-authored a research paper titled "The Impact of Asynchronous JavaScript on Modern Web Performance," published in the National Conference on Emerging Computer Technologies.'
               }
             ].map((item, index) => (
