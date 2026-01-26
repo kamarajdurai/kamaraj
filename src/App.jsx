@@ -345,19 +345,19 @@ function App() {
                 icon: '🏆',
                 title: 'Codewar 1.0',
                 img: '/pic/award.png',
-                desc: 'Won first place in the 2024 Inter-College Hackathon for developing an innovative solution for local waste management. Our project was praised for its user-friendly interface and practical application.'
+                desc: 'I secured first place in CodeWar 1.0 at Park Engineering College, winning a cash prize of ₹10,000, and was honored on Achievers’ Day during my first year.'
               },
               {
                 icon: '📜',
                 title: 'BGS Certification',
                 img: '/pic/bgs.jpg',
-                desc: 'Completed the "Responsive Web Design" certification from freeCodeCamp, mastering HTML, CSS Flexbox, CSS Grid, and building five certification projects to demonstrate proficiency.'
+                desc: 'I participated in the National Level Hackathon “ADVAYA 2K25,” conducted at BGS College of Engineering & Technology, Bengaluru, on 11–12 April 2025.'
               },
               {
-                icon: '🌍',
-                title: 'Research Paper Published',
+                icon: '🏆',
+                title: 'GravitoHacks – GDG Saveetha',
                 img: 'pic/google.jpg',
-                desc: 'Co-authored a research paper titled "The Impact of Asynchronous JavaScript on Modern Web Performance," published in the National Conference on Emerging Computer Technologies.'
+                desc: 'Thrilled to share that Team Pixelate secured 2nd place at GravitoHacks, a hackathon organized by the Google Developer Group (GDG) at Saveetha School of Engineering.'
               }
             ].map((item, index) => (
               <TiltCard key={index} className="project-card fade-in">
@@ -386,7 +386,7 @@ function App() {
               <div className="project-body">
                 <h4>Travel and Tourism</h4>
                 <p>Travel and tourism platform for viewing places in VA/AR.</p>
-                <a className="btn ghost" href="https://mytrip-kohl.vercel.app/">View</a>
+                <a className="btn ghost" href="https://tripplanner-amber.vercel.app/">View</a>
               </div>
             </TiltCard>
 
