@@ -172,45 +172,8 @@ function App() {
   };
 
   // Contact Form
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  // Using native form submission for better reliability/debuggability
 
-  const handleContactSubmit = async (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    const fd = new FormData(e.target);
-    const data = Object.fromEntries(fd.entries());
-
-    // Add configuration options for FormSubmit
-    data._captcha = "false"; // Disable captcha to prevent issues with AJAX
-    data._template = "table"; // Use a nice table template for the email
-
-    try {
-      const response = await fetch("https://formsubmit.co/ajax/kamarajdurai2005@gmail.com", {
-        method: "POST",
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify(data)
-      });
-
-      const result = await response.json();
-      console.log('FormSubmit Result:', result); // Log result for debugging
-
-      if (response.ok) {
-        alert("Thanks! Message sent successfully. (Note: Check your email to activate FormSubmit for the first time)");
-        e.target.reset();
-      } else {
-        console.error('FormSubmit Error:', result);
-        alert(`Something went wrong: ${result.message || "Please try again later."}`);
-      }
-    } catch (error) {
-      console.error('Fetch Error:', error);
-      alert("Error sending message. Please check the console for details and try again.");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   // Projects Data
   const projects = [
