@@ -8,22 +8,34 @@ function App() {
   const [isDark, setIsDark] = useState(true);
   const [typedText, setTypedText] = useState('');
   const [activeSection, setActiveSection] = useState('home');
-  const [scrollY, setScrollY] = useState(0);
 
   // Refs
   const canvasRef = useRef(null);
-  const typedTargetRef = useRef(null);
+  const profileRef = useRef(null);
+  const textRef = useRef(null);
 
   // Toggle Nav
   const toggleNav = () => setIsNavOpen(!isNavOpen);
 
-  // Scroll Parallax
+  // Optimized Scroll Parallax (No Re-renders)
   useEffect(() => {
+    let rafId;
     const handleScroll = () => {
-      setScrollY(window.scrollY);
+      const y = window.scrollY;
+      rafId = requestAnimationFrame(() => {
+        if (profileRef.current) {
+          profileRef.current.style.transform = `translateY(${y * 0.15}px)`;
+        }
+        if (textRef.current) {
+          textRef.current.style.transform = `translateY(${y * 0.05}px)`;
+        }
+      });
     };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      cancelAnimationFrame(rafId);
+    };
   }, []);
 
   // Dark Mode Toggle
@@ -37,18 +49,7 @@ function App() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  useEffect(() => {
-    if (!isDark) {
-      document.documentElement.style.setProperty('--bg1', '#f5f7fb');
-      document.documentElement.style.setProperty('--bg2', '#efeff6');
-      document.documentElement.style.setProperty('--accent1', '#6b2ff7');
-      document.body.style.color = '#1b1b27';
-    } else {
-      document.documentElement.style.removeProperty('--bg1');
-      document.documentElement.style.removeProperty('--bg2');
-      document.body.style.color = '';
-    }
-  }, [isDark]);
+  /* ... skipping unchanged Typed Effect ... */
 
   // Typed Effect
   useEffect(() => {
@@ -100,13 +101,15 @@ function App() {
       W = canvas.width = canvas.clientWidth;
       H = canvas.height = canvas.clientHeight;
       particles = [];
-      for (let i = 0; i < 40; i++) {
+      // Reduced particle count for performance: 10 on mobile, 30 on desktop
+      const particleCount = W < 768 ? 10 : 30;
+      for (let i = 0; i < particleCount; i++) {
         particles.push({
           x: Math.random() * W,
           y: Math.random() * H,
           r: Math.random() * 2 + 0.6,
-          vx: (Math.random() - 0.5) * 0.4,
-          vy: (Math.random() - 0.5) * 0.4
+          vx: (Math.random() - 0.5) * 0.3, // Slower movement
+          vy: (Math.random() - 0.5) * 0.3
         });
       }
     };
@@ -128,11 +131,15 @@ function App() {
       animationId = requestAnimationFrame(step);
     };
 
-    window.addEventListener('resize', reset);
-    reset();
-    step();
+    // Defer animation start to prioritize LCP (Language Content Paint)
+    const timerId = setTimeout(() => {
+      window.addEventListener('resize', reset);
+      reset();
+      step();
+    }, 1500);
 
     return () => {
+      clearTimeout(timerId);
       window.removeEventListener('resize', reset);
       cancelAnimationFrame(animationId);
     };
@@ -162,25 +169,41 @@ function App() {
 
   // Resume Download
   const handleDownloadResume = (e) => {
-    // e.preventDefault(); // If using actual file, don't prevent default.
-    // The original code generated a blob, but the HTML had a link to ./file/resume.pdf
-    // I will keep the link behavior if it points to a real file, or implement the blob if requested.
-    // The HTML had: <a class="btn pulse" href="./file/resume.pdf" download>
-    // The JS had: logic for #download-resume button which wasn't in the HTML snippet provided (or I missed it).
-    // Ah, the JS had `const resumeBtn = $('#download-resume');` but the HTML has `<a ... href="./file/resume.pdf" ...>`.
-    // I will stick to the HTML link which is simpler and likely what is used.
   };
 
   // Contact Form
-  const handleContactSubmit = (e) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleContactSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
     const fd = new FormData(e.target);
-    alert('Thanks, ' + fd.get('name') + " — message received (demo).\nI'll reply at: " + fd.get('email'));
-    e.target.reset();
+    const data = Object.fromEntries(fd.entries());
+
+    try {
+      const response = await fetch("https://formsubmit.co/ajax/kamarajdurai2005@gmail.com", {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        alert("Thanks! Message sent successfully. (Note: Check your email to activate FormSubmit for the first time)");
+        e.target.reset();
+      } else {
+        alert("Something went wrong. Please try again later.");
+      }
+    } catch (error) {
+      alert("Error sending message. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
-
-  // Achievement Accordion
-
 
   // Projects Data
   const projects = [
@@ -194,7 +217,7 @@ function App() {
       link: 'https://tripplanner-amber.vercel.app/',
       images: [
         '/pic/vr.png',
-        '/pic/plan.png', // Placeholder, using other project images as requested
+        '/pic/plan.png',
         '/pic/view.png',
         '/pic/ar.jpeg'
       ]
@@ -204,7 +227,7 @@ function App() {
       title: 'Herbious',
       description: 'Herbious for learn herbs and we can see plants in VR view.',
       details: 'Developing a web application for exploring medicinal plants and promoting health literacy',
-      Tech:'Tech Stack: HTML ,CSS, JS,PHP and MySQL',
+      Tech: 'Tech Stack: HTML ,CSS, JS,PHP and MySQL',
       img: '/pic/harb.png',
       link: 'https://herbours.netlify.app/',
       images: [
@@ -244,18 +267,20 @@ function App() {
   return (
     <>
       <header>
-        <div className="nav-inner container">
+        <div className="nav-inner">
           <div className="brand">
             <h1>Kamaraj</h1>
           </div>
           <nav className={isNavOpen ? 'open' : ''}>
-            <a href="#home" className={`nav-link ${activeSection === 'home' ? 'active' : ''}`} onClick={() => setIsNavOpen(false)}>Home</a>
-            <a href="#about" className={`nav-link ${activeSection === 'about' ? 'active' : ''}`} onClick={() => setIsNavOpen(false)}>About</a>
-            <a href="#achievements" className={`nav-link ${activeSection === 'achievements' ? 'active' : ''}`} onClick={() => setIsNavOpen(false)}>Achievements</a>
-            <a href="#projects" className={`nav-link ${activeSection === 'projects' ? 'active' : ''}`} onClick={() => setIsNavOpen(false)}>Projects</a>
-            <a href="#contact" className={`nav-link ${activeSection === 'contact' ? 'active' : ''}`} onClick={() => setIsNavOpen(false)}>Contact</a>
+            <a href="#home" className={activeSection === 'home' ? 'active' : ''} onClick={() => setIsNavOpen(false)}>Home</a>
+            <a href="#about" className={activeSection === 'about' ? 'active' : ''} onClick={() => setIsNavOpen(false)}>About</a>
+            <a href="#achievements" className={activeSection === 'achievements' ? 'active' : ''} onClick={() => setIsNavOpen(false)}>Achievements</a>
+            <a href="#projects" className={activeSection === 'projects' ? 'active' : ''} onClick={() => setIsNavOpen(false)}>Projects</a>
+            <a href="#contact" className={activeSection === 'contact' ? 'active' : ''} onClick={() => setIsNavOpen(false)}>Contact</a>
           </nav>
-          <button className="hamburger" aria-label="menu" aria-expanded={isNavOpen} onClick={toggleNav}>☰</button>
+          <button className="hamburger" onClick={toggleNav} aria-label="Toggle Menu">
+            {isNavOpen ? '✕' : '☰'}
+          </button>
         </div>
       </header>
 
@@ -265,25 +290,28 @@ function App() {
           <div className="hero-inner">
             <div
               className="fade-in"
-              style={{ transform: `translateY(${scrollY * 0.15}px)` }}
+              ref={profileRef}
+              style={{ willChange: 'transform' }}
             >
-              <TiltCard className="profile card">
+              <TiltCard className="profile">
                 <img src="/pic/kamaraj.jpg" alt="Profile" />
               </TiltCard>
             </div>
             <div
               className="hero-text"
-              style={{ transform: `translateY(${scrollY * 0.05}px)` }}
+              ref={textRef}
+              style={{ willChange: 'transform' }}
             >
-              <h2 className="fade-in">Hi — I'm <strong>Kamaraj</strong></h2>
-              <p className="fade-in" style={{ color: '#cfcfe8' }}>
-                {typedText || "A college student passionate about web development, UI/UX and building projects that blend design with clean code."}
+              <h2 className="fade-in">Hi, I'm <strong>Kamaraj</strong></h2>
+              <p className="tagline fade-in">
+                {typedText || "Designing delightful experiences & building responsive web apps."}
               </p>
 
-              <div className="cta-row fade-in" style={{ marginTop: '16px' }}>
+              <div className="cta-row fade-in">
                 <a className="btn pulse" href="/file/resume.pdf" download>
-                  <span>⬇</span> Resume </a>
-                <a className="btn ghost" href="#projects">View Projects</a>
+                  Download Resume
+                </a>
+                <a className="btn" href="#projects">View Projects</a>
               </div>
             </div>
           </div>
@@ -387,6 +415,7 @@ function App() {
           </div>
         </section>
 
+
         <section id="achievements">
           <h3 className="section-title">My Achievements</h3>
           <div className="projects-grid">
@@ -412,7 +441,7 @@ function App() {
             ].map((item, index) => (
               <TiltCard key={index} className="project-card fade-in">
                 <div className="project-thumb" style={{ height: '200px', background: 'transparent' }}>
-                  <img src={item.img} alt={item.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <img src={item.img} alt={item.title} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 </div>
                 <div className="project-body">
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
@@ -432,7 +461,7 @@ function App() {
             {projects.map((project) => (
               <TiltCard key={project.id} className="project-card fade-in">
                 <div className="project-thumb">
-                  <img src={project.img} alt={project.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <img src={project.img} alt={project.title} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 </div>
                 <div className="project-body">
                   <h4>{project.title}</h4>
@@ -455,7 +484,9 @@ function App() {
               <input type="email" name="email" placeholder="Your email" required />
               <input type="text" name="subject" placeholder="Subject" />
               <textarea name="message" placeholder="Your message" required></textarea>
-              <button className="btn" type="submit">Send Message</button>
+              <button className="btn" type="submit" disabled={isSubmitting}>
+                {isSubmitting ? 'Sending...' : 'Send Message'}
+              </button>
             </form>
           </div>
         </section>
@@ -478,7 +509,7 @@ function App() {
             <div className="modal-gallery">
               {selectedProject.images.map((img, idx) => (
                 <div key={idx} className="gallery-item">
-                  <img src={img} alt={`${selectedProject.title} - ${idx + 1}`} />
+                  <img src={img} alt={`${selectedProject.title} - ${idx + 1}`} loading="lazy" />
                 </div>
               ))}
             </div>

@@ -1,35 +1,59 @@
-import { useState, useRef, useEffect } from 'react';
+import { useRef } from 'react';
 
 export default function TiltCard({ children, className = '' }) {
     const cardRef = useRef(null);
-    const [rotation, setRotation] = useState({ x: 0, y: 0 });
-    const [scale, setScale] = useState(1);
-
-    const handleMouseMove = (e) => {
-        if (!cardRef.current) return;
-
-        const card = cardRef.current;
-        const rect = card.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-
-        const centerX = rect.width / 2;
-        const centerY = rect.height / 2;
-
-        const rotateX = ((y - centerY) / centerY) * -10; // Max 10deg rotation
-        const rotateY = ((x - centerX) / centerX) * 10;
-
-        setRotation({ x: rotateX, y: rotateY });
-    };
+    const rectRef = useRef(null);
+    const rafId = useRef(null);
 
     const handleMouseEnter = () => {
-        setScale(1.05);
+        if (cardRef.current) {
+            rectRef.current = cardRef.current.getBoundingClientRect();
+            cardRef.current.style.transition = 'transform 0.1s ease-out';
+            cardRef.current.style.transform = `perspective(1000px) scale3d(1.02, 1.02, 1)`;
+        }
+    };
+
+    const handleMouseMove = (e) => {
+        if (!cardRef.current || !rectRef.current) return;
+
+        // Debounce/Throttle via RAF
+        if (rafId.current) return;
+
+        rafId.current = requestAnimationFrame(() => {
+            const rect = rectRef.current;
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+
+            // Limit rotation to small values for performance and subtlety
+            const rotateX = ((y - centerY) / centerY) * -8;
+            const rotateY = ((x - centerX) / centerX) * 8;
+
+            if (cardRef.current) {
+                cardRef.current.style.transform =
+                    `perspective(1000px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) scale3d(1.02, 1.02, 1)`;
+            }
+            rafId.current = null;
+        });
     };
 
     const handleMouseLeave = () => {
-        setRotation({ x: 0, y: 0 });
-        setScale(1);
+        if (rafId.current) {
+            cancelAnimationFrame(rafId.current);
+            rafId.current = null;
+        }
+        if (cardRef.current) {
+            cardRef.current.style.transition = 'transform 0.5s ease-out'; // Slower smooth return
+            cardRef.current.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+        }
     };
+
+    // Mobile Optimization: Disable tilt on touch devices
+    if (typeof window !== 'undefined' && window.matchMedia('(hover: none)').matches) {
+        return <div className={className}>{children}</div>;
+    }
 
     return (
         <div
@@ -39,10 +63,8 @@ export default function TiltCard({ children, className = '' }) {
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
             style={{
-                transform: `perspective(1000px) rotateX(${rotation.x}deg) rotateY(${rotation.y}deg) scale3d(${scale}, ${scale}, 1)`,
-                transition: 'transform 0.1s ease-out',
-                transformStyle: 'preserve-3d',
                 willChange: 'transform',
+                transformStyle: 'preserve-3d'
             }}
         >
             {children}
