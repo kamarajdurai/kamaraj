@@ -41,7 +41,7 @@ function App() {
   // Dark Mode Toggle
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (e.key.toLowerCase() === 'd') {
+      if (e.key && e.key.toLowerCase() === 'd') {
         setIsDark(prev => !prev);
       }
     };
@@ -486,13 +486,16 @@ function App() {
         <section id="contact">
           <h3 className="section-title">Contact</h3>
           <div className="card">
-            <form id="contact-form" onSubmit={handleContactSubmit}>
+            <form id="contact-form" action="https://formsubmit.co/kamarajdurai2005@gmail.com" method="POST">
+              <input type="hidden" name="_captcha" value="false" />
+              <input type="hidden" name="_template" value="table" />
+              <input type="hidden" name="_next" value="https://kamaraj-portfolio.vercel.app/" />
               <input type="text" name="name" placeholder="Your name" required />
               <input type="email" name="email" placeholder="Your email" required />
               <input type="text" name="subject" placeholder="Subject" />
               <textarea name="message" placeholder="Your message" required></textarea>
-              <button className="btn" type="submit" disabled={isSubmitting}>
-                {isSubmitting ? 'Sending...' : 'Send Message'}
+              <button className="btn" type="submit">
+                Send Message
               </button>
             </form>
           </div>
