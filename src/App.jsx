@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import './index.css';
 import TiltCard from './TiltCard';
+import { db } from './firebase';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
 function App() {
   const [isNavOpen, setIsNavOpen] = useState(false);
@@ -48,8 +50,6 @@ function App() {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
-
-  /* ... skipping unchanged Typed Effect ... */
 
   // Typed Effect
   useEffect(() => {
@@ -167,13 +167,35 @@ function App() {
     return () => observer.disconnect();
   }, []);
 
-  // Resume Download
-  const handleDownloadResume = (e) => {
+  // Contact Form Logic
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    subject: '',
+    message: ''
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Contact Form
-  // Using native form submission for better reliability/debuggability
-
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    try {
+      await addDoc(collection(db, "messages"), {
+        ...formData,
+        timestamp: serverTimestamp()
+      });
+      alert("Message sent successfully!");
+      setFormData({ name: '', email: '', subject: '', message: '' });
+    } catch (error) {
+      console.error("Error adding document: ", error);
+      alert(`Error sending message: ${error.message}`);
+    }
+    setIsSubmitting(false);
+  };
 
   // Projects Data
   const projects = [
@@ -449,16 +471,39 @@ function App() {
         <section id="contact">
           <h3 className="section-title">Contact</h3>
           <div className="card">
-            <form id="contact-form" action="https://formsubmit.co/kamarajdurai2005@gmail.com" method="POST">
-              <input type="hidden" name="_captcha" value="false" />
-              <input type="hidden" name="_template" value="table" />
-              <input type="hidden" name="_next" value="https://kamaraj-portfolio.vercel.app/" />
-              <input type="text" name="name" placeholder="Your name" required />
-              <input type="email" name="email" placeholder="Your email" required />
-              <input type="text" name="subject" placeholder="Subject" />
-              <textarea name="message" placeholder="Your message" required></textarea>
-              <button className="btn" type="submit">
-                Send Message
+            <form id="contact-form" onSubmit={handleSubmit}>
+              <input
+                type="text"
+                name="name"
+                placeholder="Your name"
+                value={formData.name}
+                onChange={handleChange}
+                required
+              />
+              <input
+                type="email"
+                name="email"
+                placeholder="Your email"
+                value={formData.email}
+                onChange={handleChange}
+                required
+              />
+              <input
+                type="text"
+                name="subject"
+                placeholder="Subject"
+                value={formData.subject}
+                onChange={handleChange}
+              />
+              <textarea
+                name="message"
+                placeholder="Your message"
+                value={formData.message}
+                onChange={handleChange}
+                required
+              ></textarea>
+              <button className="btn" type="submit" disabled={isSubmitting}>
+                {isSubmitting ? 'Sending...' : 'Send Message'}
               </button>
             </form>
           </div>
