@@ -416,31 +416,54 @@ function App() {
                 icon: '🏆',
                 title: 'Codewar 1.0',
                 img: '/pic/award.png',
-                desc: 'I secured first place in CodeWar 1.0 at Park Engineering College, winning a cash prize of ₹10,000, and was honored on Achievers’ Day during my first year.'
+                desc: <>I secured first place in CodeWar 1.0 at Park Engineering College, winning a <strong className="text-highlight-orange">cash prize of ₹10,000</strong> and was honored on Achievers' Day during my first year.</>,
+                btnIcon: '',
+                btnText: '1st Year Achievement',
+                cardClass: 'achievement-card ach-orange'
               },
               {
                 icon: '📜',
                 title: 'BGS Certification',
                 img: '/pic/bgs.jpg',
-                desc: 'I participated in the National Level Hackathon “ADVAYA 2K25,” conducted at BGS College of Engineering & Technology, Bengaluru, on 11–12 April 2025.'
+                desc: <>I participated in the National Level Hackathon <strong className="text-highlight-blue">"ADVAYA 2K25,"</strong> conducted at BGS College of Engineering & Technology, Bengaluru, on 11–12 April 2025.</>,
+                btnIcon: '🟢', // Simple dot representation
+                btnText: 'National Level Hackathon',
+                cardClass: 'achievement-card ach-blue'
               },
               {
                 icon: '🏆',
                 title: 'GravitoHacks – GDG Saveetha',
                 img: 'pic/google.jpg',
-                desc: 'Thrilled to share that Team Pixelate secured 2nd place at GravitoHacks, a hackathon organized by the Google Developer Group (GDG) at Saveetha School of Engineering.'
+                desc: <>Thrilled to share that Team Pixelate secured <strong className="text-highlight-blue">2nd place</strong> at GravitoHacks, a hackathon organized by the Google Developer Group (GDG) at Saveetha School of Engineering.</>,
+                btnIcon: 'G', // Replace with an actual Google icon or image if available
+                imgIcon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg',
+                btnText: 'Google GDG Event',
+                cardClass: 'achievement-card ach-dark'
               }
             ].map((item, index) => (
-              <TiltCard key={index} className="project-card fade-in">
-                <div className="project-thumb" style={{ height: '200px', background: 'transparent' }}>
-                  <img src={item.img} alt={item.title} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              <TiltCard key={index} className={`card-base ${item.cardClass} fade-in`}>
+                <div className="ach-img-container">
+                  <img src={item.img} alt={item.title} loading="lazy" />
                 </div>
-                <div className="project-body">
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                    <span style={{ fontSize: '24px' }}>{item.icon}</span>
-                    <h4 style={{ margin: 0 }}>{item.title}</h4>
+                <div className="ach-body">
+                  <div className="ach-header">
+                    <span className="ach-icon">{item.icon}</span>
+                    <h4>{item.title}</h4>
                   </div>
-                  <p>{item.desc}</p>
+                  <hr className="ach-divider" />
+                  <p className="ach-desc">{item.desc}</p>
+
+                  <button className="ach-btn">
+                    {item.imgIcon ? (
+                      <img src={item.imgIcon} alt="icon" className="ach-btn-icon-img" />
+                    ) : item.btnIcon ? (
+                      <span className="ach-btn-icon">{item.btnIcon}</span>
+                    ) : null}
+                    {item.btnText}
+                    <svg className="ach-btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
+                  </button>
                 </div>
               </TiltCard>
             ))}
