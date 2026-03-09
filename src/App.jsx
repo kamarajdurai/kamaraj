@@ -460,9 +460,6 @@ function App() {
                       <span className="ach-btn-icon">{item.btnIcon}</span>
                     ) : null}
                     {item.btnText}
-                    <svg className="ach-btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M5 12h14M12 5l7 7-7 7" />
-                    </svg>
                   </button>
                 </div>
               </TiltCard>
@@ -474,16 +471,24 @@ function App() {
           <h3 className="section-title">Projects</h3>
           <div className="projects-grid">
             {projects.map((project) => (
-              <TiltCard key={project.id} className="project-card fade-in">
-                <div className="project-thumb">
-                  <img src={project.img} alt={project.title} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              <TiltCard key={project.id} className={`achievement-card fade-in ${project.id === 1 ? 'ach-blue' : project.id === 2 ? 'ach-orange' : 'ach-dark'}`}>
+                <div className="ach-img-container">
+                  <img src={project.img} alt={project.title} loading="lazy" />
                 </div>
-                <div className="project-body">
-                  <h4>{project.title}</h4>
-                  <p>{project.description}</p>
+                <div className="ach-body">
+                  <div className="ach-header">
+                    <h4>{project.title}</h4>
+                  </div>
+                  <hr className="ach-divider" />
+                  <p className="ach-desc">{project.description}</p>
+
                   <div style={{ display: 'flex', gap: '10px', marginTop: 'auto' }}>
-                    <a className="btn ghost" href={project.link} target="_blank" rel="noopener noreferrer">App</a>
-                    <button className="btn ghost" onClick={() => setSelectedProject(project)}>Details</button>
+                    <a className="ach-btn" href={project.link} target="_blank" rel="noopener noreferrer">
+                      App
+                    </a>
+                    <button className="ach-btn" onClick={() => setSelectedProject(project)}>
+                      Details
+                    </button>
                   </div>
                 </div>
               </TiltCard>
