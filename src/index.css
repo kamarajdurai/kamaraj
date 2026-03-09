@@ -419,20 +419,56 @@ h3.section-title {
 /* Skills tabs */
 .tabs {
   display: flex;
-  gap: 12px;
-  margin-bottom: 12px;
+  gap: 8px;
+  /* Slightly tighter gap to match nav a */
+  margin-bottom: 24px;
+  width: fit-content;
+  max-width: 100%;
+  padding: 8px;
+  border-radius: var(--radius-pill);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.02) 100%);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow:
+    0 8px 32px 0 rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.1);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.tabs::-webkit-scrollbar {
+  display: none;
 }
 
 .tab {
-  padding: 8px 12px;
-  border-radius: 999px;
+  padding: 8px 16px;
+  /* Matched nav a padding */
+  border-radius: var(--radius-pill);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-muted);
+  transition: all 0.3s ease;
   cursor: pointer;
-  border: 1px solid rgba(255, 255, 255, 0.03);
+  border: 1px solid transparent;
+  /* Prevents layout shift when active applies borders */
+  white-space: nowrap;
+}
+
+.tab:hover {
+  color: var(--text-main);
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .tab.active {
-  background: linear-gradient(90deg, var(--accent1), #b13efc);
-  color: white;
+  /* Soft Glass Fill */
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.2),
+    0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .skill-grid {
@@ -740,6 +776,18 @@ footer {
   .nav-inner {
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
+  }
+
+  /* Skills Tabs Responsiveness */
+  .tabs {
+    width: 100%;
+  }
+
+  .tab {
+    flex: 1;
+    text-align: center;
+    padding: 8px 12px;
+    font-size: 13px;
   }
 }
 
