@@ -286,7 +286,7 @@ function App() {
               style={{ willChange: 'transform' }}
             >
               <TiltCard className="profile">
-                <img src="/pic/kamaraj.jpg" alt="Profile" />
+                <img src="/pic/kamaraj.png" alt="Profile" />
               </TiltCard>
             </div>
             <div
