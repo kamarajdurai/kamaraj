@@ -15,6 +15,33 @@ function App() {
   const canvasRef = useRef(null);
   const profileRef = useRef(null);
   const textRef = useRef(null);
+  const navLinksRef = useRef(null);
+
+  const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
+
+  useEffect(() => {
+    const updateIndicator = () => {
+      if (navLinksRef.current) {
+        const activeLink = navLinksRef.current.querySelector('.active');
+        if (activeLink) {
+          setIndicatorStyle({
+            left: activeLink.offsetLeft,
+            width: activeLink.offsetWidth
+          });
+        }
+      }
+    };
+
+    updateIndicator();
+    // Ensure accurate sizing after initial render
+    const timeoutId = setTimeout(updateIndicator, 50);
+
+    window.addEventListener('resize', updateIndicator);
+    return () => {
+      clearTimeout(timeoutId);
+      window.removeEventListener('resize', updateIndicator);
+    };
+  }, [activeSection, isNavOpen]);
 
   // Toggle Nav
   const toggleNav = () => setIsNavOpen(!isNavOpen);
@@ -258,22 +285,19 @@ function App() {
 
   return (
     <>
-      <header>
-        <div className="nav-inner">
-          <div className="brand">
-            <h1>Kamaraj</h1>
-          </div>
-          <nav className={isNavOpen ? 'open' : ''}>
-            <a href="#home" className={activeSection === 'home' ? 'active' : ''} onClick={() => setIsNavOpen(false)}>Home</a>
-            <a href="#about" className={activeSection === 'about' ? 'active' : ''} onClick={() => setIsNavOpen(false)}>About</a>
-            <a href="#achievements" className={activeSection === 'achievements' ? 'active' : ''} onClick={() => setIsNavOpen(false)}>Achievements</a>
-            <a href="#projects" className={activeSection === 'projects' ? 'active' : ''} onClick={() => setIsNavOpen(false)}>Projects</a>
-            <a href="#contact" className={activeSection === 'contact' ? 'active' : ''} onClick={() => setIsNavOpen(false)}>Contact</a>
-          </nav>
-          <button className="hamburger" onClick={toggleNav} aria-label="Toggle Menu">
-            {isNavOpen ? '✕' : '☰'}
-          </button>
+      <header className="navbar">
+        <div className="logo">Kamaraj</div>
+        <div className={`nav-links ${isNavOpen ? 'open' : ''}`} ref={navLinksRef}>
+          <div className="nav-indicator" style={{ left: `${indicatorStyle.left}px`, width: `${indicatorStyle.width}px` }}></div>
+          <a href="#home" className={`nav-item ${activeSection === 'home' ? 'active' : ''}`} onClick={() => setIsNavOpen(false)}>Home</a>
+          <a href="#about" className={`nav-item ${activeSection === 'about' ? 'active' : ''}`} onClick={() => setIsNavOpen(false)}>About</a>
+          <a href="#achievements" className={`nav-item ${activeSection === 'achievements' ? 'active' : ''}`} onClick={() => setIsNavOpen(false)}>Achievements</a>
+          <a href="#projects" className={`nav-item ${activeSection === 'projects' ? 'active' : ''}`} onClick={() => setIsNavOpen(false)}>Projects</a>
+          <a href="#contact" className={`nav-item ${activeSection === 'contact' ? 'active' : ''}`} onClick={() => setIsNavOpen(false)}>Contact</a>
         </div>
+        <button className="hamburger" onClick={toggleNav} aria-label="Toggle Menu">
+          {isNavOpen ? '✕' : '☰'}
+        </button>
       </header>
 
       <main className="container">
@@ -343,9 +367,10 @@ function App() {
                 <h4 style={{ margin: 0 }}> My Skills</h4>
               </div>
               <div className="tabs" role="tablist" style={{ marginBottom: '14px' }}>
-                <div className={`tab ${activeTab === 'frontend' ? 'active' : ''}`} onClick={() => setActiveTab('frontend')} role="tab" aria-selected={activeTab === 'frontend'}>Frontend</div>
-                <div className={`tab ${activeTab === 'backend' ? 'active' : ''}`} onClick={() => setActiveTab('backend')} role="tab" aria-selected={activeTab === 'backend'}>Backend</div>
-                <div className={`tab ${activeTab === 'tools' ? 'active' : ''}`} onClick={() => setActiveTab('tools')} role="tab" aria-selected={activeTab === 'tools'}>Tools</div>
+                <div className="indicator" style={{ transform: `translateX(${['frontend', 'backend', 'tools'].indexOf(activeTab) * 100}%)` }}></div>
+                <button className={`tab ${activeTab === 'frontend' ? 'active' : ''}`} onClick={() => setActiveTab('frontend')} role="tab" aria-selected={activeTab === 'frontend'}>Frontend</button>
+                <button className={`tab ${activeTab === 'backend' ? 'active' : ''}`} onClick={() => setActiveTab('backend')} role="tab" aria-selected={activeTab === 'backend'}>Backend</button>
+                <button className={`tab ${activeTab === 'tools' ? 'active' : ''}`} onClick={() => setActiveTab('tools')} role="tab" aria-selected={activeTab === 'tools'}>Tools</button>
               </div>
               <div className="skill-area">
                 {activeTab === 'frontend' && (
