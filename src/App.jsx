@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import './index.css';
-import TiltCard from './TiltCard';
-import { db } from './firebase';
+import TiltCard from './components/TiltCard';
+import { db } from './services/firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
 function App() {
