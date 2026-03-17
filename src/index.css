@@ -566,6 +566,7 @@ h3.section-title {
   padding: 16px;
   display: flex;
   flex-direction: column;
+  height: 100%;
   gap: 16px;
   background: var(--bg-card);
   border-radius: 20px;
@@ -596,6 +597,16 @@ h3.section-title {
 .ach-blue:hover {
   box-shadow: inset 0 -30px 60px -20px rgba(0, 150, 255, 0.3), 0 20px 40px rgba(0, 150, 255, 0.15);
   border-bottom: 2px solid rgba(0, 150, 255, 0.8);
+}
+
+.ach-purple {
+  border-bottom: 2px solid rgba(130, 20, 255, 0.4);
+  box-shadow: inset 0 -20px 40px -20px rgba(130, 20, 255, 0.2), 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.ach-purple:hover {
+  box-shadow: inset 0 -30px 60px -20px rgba(130, 20, 255, 0.3), 0 20px 40px rgba(130, 20, 255, 0.15);
+  border-bottom: 2px solid rgba(130, 20, 255, 0.8);
 }
 
 .ach-dark {

@@ -439,11 +439,11 @@ function App() {
             {[
               {
                 icon: '🏆',
-                title: 'Codewar 1.0',
+                title: 'KIOT Achievers Award (2023–24)',
                 img: '/pic/award.png',
                 desc: <>I secured first place in CodeWar 1.0 at Park Engineering College, winning a <strong className="text-highlight-orange">cash prize of ₹10,000</strong> and was honored on Achievers' Day during my first year.</>,
-                btnIcon: '',
-                btnText: '1st Year Achievement',
+                btnIcon: '🎖️',
+                btnText: 'Achievers Award',
                 cardClass: 'achievement-card ach-orange'
               },
               {
@@ -464,6 +464,15 @@ function App() {
                 imgIcon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg',
                 btnText: 'Google GDG Event',
                 cardClass: 'achievement-card ach-dark'
+              },
+              {
+                icon: '🏆',
+                title: 'KIOT Achievers Award (2025–26)',
+                img: '/pic/2nd award.png',
+                desc: <>Secured 2nd Place at Gravito Hacks – National Level Hackathon as a proud member of <strong className="text-highlight-blue">Team PIXELATE</strong>. Recognized for innovation, problem-solving, and technical excellence. Grateful to Knowledge Institute of Technology (KIOT) for the recognition.</>,
+                btnIcon: '🎖️',
+                btnText: 'Achievers Award',
+                cardClass: 'achievement-card ach-purple'
               }
             ].map((item, index) => (
               <TiltCard key={index} className={`card-base ${item.cardClass} fade-in`}>
