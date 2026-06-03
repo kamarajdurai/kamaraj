@@ -258,16 +258,17 @@ function App() {
     },
     {
       id: 3,
-      title: 'Job Portal',
-      description: 'Job portal for finding jobs and applying for jobs.',
-      details: 'A comprehensive job search engine connecting seekers with employers. Features include resume parsing, smart matching algorithms, and real-time application tracking.',
-      img: '/pic/job.png',
-      link: 'https://jobbd.netlify.app/',
+      title: 'EventHub',
+      description: 'EventHub is a smart student event registration platform for exploring events',
+      details: 'EventHub is a smart student event registration platform for exploring and joining technical, non-technical, and cultural college events. It provides secure online registration with auto-generated QR code digital tickets for fast and verified event entry.',
+      Tech: 'tech stack:Frontend: React.js,Backend: Node.js with Express,Database: Firebase (Firestore)',
+      img: '/pic/event 1.png',
+      link: 'https://event-college.vercel.app/',
       images: [
-        '/pic/job.png',
-        '/pic/vr.png',
-        '/pic/harb.png',
-        '/pic/google.jpg'
+        '/pic/event 1.png',
+        '/pic/event 2.png',
+        '/pic/event 3.png',
+        '/pic/event 4.png'
       ]
     }
   ];
@@ -584,7 +585,7 @@ function App() {
             <h3 style={{ marginTop: 0, marginBottom: '8px' }}>{selectedProject.title}</h3>
             <p style={{ color: 'var(--accent1)', marginBottom: '8px' }}><strong>{selectedProject.description}</strong></p>
             <p style={{ marginBottom: '12px', lineHeight: '1.6' }}>{selectedProject.details}</p>
-            {selectedProject.Tech && <p style={{ marginBottom: '12px', color: '#cfcfe8' }}>{selectedProject.Tech}</p>}
+            {selectedProject.Tech && <p style={{ marginBottom: '12px', color: '#cfcfe8', whiteSpace: 'pre-line' }}>{selectedProject.Tech}</p>}
 
             <div className="modal-gallery">
               {selectedProject.images.map((img, idx) => (
