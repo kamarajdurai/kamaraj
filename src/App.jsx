@@ -301,38 +301,39 @@ function App() {
         </button>
       </header>
 
-      <main className="container">
-        <section id="home" className="hero">
-          <canvas id="particle-canvas" ref={canvasRef}></canvas>
-          <div className="hero-inner">
-            <div
-              className="fade-in"
-              ref={profileRef}
-              style={{ willChange: 'transform' }}
-            >
-              <TiltCard className="profile">
-                <img src="/pic/kamaraj.png" alt="Profile" />
-              </TiltCard>
-            </div>
-            <div
-              className="hero-text"
-              ref={textRef}
-              style={{ willChange: 'transform' }}
-            >
-              <h2 className="fade-in">Hi, I'm <strong>Kamaraj</strong></h2>
-              <p className="tagline fade-in">
-                {typedText || "Designing delightful experiences & building responsive web apps."}
-              </p>
+      <section id="home" className="hero">
+        <canvas id="particle-canvas" ref={canvasRef}></canvas>
+        <div className="hero-inner">
+          <div
+            className="fade-in"
+            ref={profileRef}
+            style={{ willChange: 'transform' }}
+          >
+            <TiltCard className="profile">
+              <img src="/pic/kamaraj.png" alt="Profile" />
+            </TiltCard>
+          </div>
+          <div
+            className="hero-text"
+            ref={textRef}
+            style={{ willChange: 'transform' }}
+          >
+            <h2 className="fade-in">Hi, I'm <strong>Kamaraj</strong></h2>
+            <p className="tagline fade-in">
+              {typedText || "Designing delightful experiences & building responsive web apps."}
+            </p>
 
-              <div className="cta-row fade-in">
-                <a className="btn pulse" href="/file/resume.pdf" download>
-                  Download Resume
-                </a>
-                <a className="btn" href="#projects">View Projects</a>
-              </div>
+            <div className="cta-row fade-in">
+              <a className="btn pulse" href="/file/resume.pdf" download>
+                Download Resume
+              </a>
+              <a className="btn" href="#projects">View Projects</a>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
+
+      <main className="container">
 
         <section id="about">
           <h3 className="section-title">About & Education</h3>
