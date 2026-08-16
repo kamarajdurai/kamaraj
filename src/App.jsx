@@ -16,9 +16,23 @@ function App() {
   const profileRef = useRef(null);
   const textRef = useRef(null);
   const navLinksRef = useRef(null);
+  const timeoutRef = useRef(null);
 
   const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
+  const [selectedProject, setSelectedProject] = useState(null);
+  const [activeModalImg, setActiveModalImg] = useState(null);
 
+  // Contact form status notification state
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    subject: '',
+    message: ''
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formStatus, setFormStatus] = useState(null);
+
+  // Active navigation indicator calculation
   useEffect(() => {
     const updateIndicator = () => {
       if (navLinksRef.current) {
@@ -33,8 +47,11 @@ function App() {
     };
 
     updateIndicator();
-    // Ensure accurate sizing after initial render
     const timeoutId = setTimeout(updateIndicator, 50);
+
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(updateIndicator);
+    }
 
     window.addEventListener('resize', updateIndicator);
     return () => {
@@ -46,17 +63,17 @@ function App() {
   // Toggle Nav
   const toggleNav = () => setIsNavOpen(!isNavOpen);
 
-  // Optimized Scroll Parallax (No Re-renders)
+  // Scroll Parallax Effect
   useEffect(() => {
     let rafId;
     const handleScroll = () => {
       const y = window.scrollY;
       rafId = requestAnimationFrame(() => {
         if (profileRef.current) {
-          profileRef.current.style.transform = `translateY(${y * 0.15}px)`;
+          profileRef.current.style.transform = `translateY(${y * 0.12}px)`;
         }
         if (textRef.current) {
-          textRef.current.style.transform = `translateY(${y * 0.05}px)`;
+          textRef.current.style.transform = `translateY(${y * 0.04}px)`;
         }
       });
     };
@@ -67,7 +84,15 @@ function App() {
     };
   }, []);
 
-  // Dark Mode Toggle
+  // Dark/Light Theme Body Class Effect
+  useEffect(() => {
+    if (isDark) {
+      document.body.classList.remove('light-theme');
+    } else {
+      document.body.classList.add('light-theme');
+    }
+  }, [isDark]);
+
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key && e.key.toLowerCase() === 'd') {
@@ -78,13 +103,12 @@ function App() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  // Typed Effect
+  // Typed Text Effect with memory leak cleanup
   useEffect(() => {
     const phrases = ['Designing delightful experiences', 'Building responsive web apps', 'Learning full-stack development'];
     let pi = 0;
     let ci = 0;
     let typing = true;
-    let timeoutId;
 
     const tick = () => {
       const current = phrases[pi];
@@ -93,28 +117,30 @@ function App() {
         setTypedText(current.slice(0, ci));
         if (ci >= current.length) {
           typing = false;
-          timeoutId = setTimeout(tick, 900);
+          timeoutRef.current = setTimeout(tick, 900);
           return;
         }
-        timeoutId = setTimeout(tick, 50);
+        timeoutRef.current = setTimeout(tick, 50);
       } else {
         ci--;
         setTypedText(current.slice(0, ci));
         if (ci <= 0) {
           typing = true;
           pi = (pi + 1) % phrases.length;
-          timeoutId = setTimeout(tick, 200);
+          timeoutRef.current = setTimeout(tick, 200);
           return;
         }
-        timeoutId = setTimeout(tick, 30);
+        timeoutRef.current = setTimeout(tick, 30);
       }
     };
 
     tick();
-    return () => clearTimeout(timeoutId);
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
   }, []);
 
-  // Particle Canvas
+  // Particle Canvas with DPI Scaling
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -125,17 +151,20 @@ function App() {
     let animationId;
 
     const reset = () => {
-      W = canvas.width = canvas.clientWidth;
-      H = canvas.height = canvas.clientHeight;
+      const dpr = window.devicePixelRatio || 1;
+      W = canvas.clientWidth;
+      H = canvas.clientHeight;
+      canvas.width = W * dpr;
+      canvas.height = H * dpr;
+      ctx.scale(dpr, dpr);
       particles = [];
-      // Reduced particle count for performance: 10 on mobile, 30 on desktop
-      const particleCount = W < 768 ? 10 : 30;
+      const particleCount = W < 768 ? 12 : 30;
       for (let i = 0; i < particleCount; i++) {
         particles.push({
           x: Math.random() * W,
           y: Math.random() * H,
           r: Math.random() * 2 + 0.6,
-          vx: (Math.random() - 0.5) * 0.3, // Slower movement
+          vx: (Math.random() - 0.5) * 0.3,
           vy: (Math.random() - 0.5) * 0.3
         });
       }
@@ -158,12 +187,11 @@ function App() {
       animationId = requestAnimationFrame(step);
     };
 
-    // Defer animation start to prioritize LCP (Language Content Paint)
     const timerId = setTimeout(() => {
       window.addEventListener('resize', reset);
       reset();
       step();
-    }, 1500);
+    }, 1000);
 
     return () => {
       clearTimeout(timerId);
@@ -172,7 +200,7 @@ function App() {
     };
   }, []);
 
-  // Intersection Observer for Fade-in and Nav Highlight
+  // Intersection Observer for Section Highlighting & Fade-in
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(e => {
@@ -194,32 +222,49 @@ function App() {
     return () => observer.disconnect();
   }, []);
 
-  // Contact Form Logic
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    subject: '',
-    message: ''
-  });
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  // Body Scroll Lock & Modal State Sync
+  useEffect(() => {
+    if (selectedProject) {
+      document.body.style.overflow = 'hidden';
+      setActiveModalImg(selectedProject.img);
+    } else {
+      document.body.style.overflow = '';
+      setActiveModalImg(null);
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [selectedProject]);
 
+  // Close Modal on Escape Key
+  useEffect(() => {
+    const handleEsc = (e) => {
+      if (e.key === 'Escape') setSelectedProject(null);
+    };
+    window.addEventListener('keydown', handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
+  }, []);
+
+  // Contact Form Submission Logic
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    if (formStatus) setFormStatus(null);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setFormStatus(null);
     try {
       await addDoc(collection(db, "messages"), {
         ...formData,
         timestamp: serverTimestamp()
       });
-      alert("Message sent successfully!");
+      setFormStatus({ type: 'success', message: '✨ Thank you! Your message has been sent successfully.' });
       setFormData({ name: '', email: '', subject: '', message: '' });
     } catch (error) {
-      console.error("Error adding document: ", error);
-      alert(`Error sending message: ${error.message}`);
+      console.error("Error submitting contact form: ", error);
+      setFormStatus({ type: 'error', message: `Unable to send message: ${error.message}` });
     }
     setIsSubmitting(false);
   };
@@ -230,8 +275,8 @@ function App() {
       id: 1,
       title: 'Travel and Tourism',
       description: 'Travel and tourism platform for viewing places in VA/AR.',
-      details: 'TN-VERSE is a smart tourism platform that combines education, safety, accessibility, and sustainability using AR/VR and intelligent recommendations to enhance the overall travel experience.  ',
-      Tech: 'Tech Stack: React , APIs-Gemini api , google map api ',
+      details: 'TN-VERSE is a smart tourism platform that combines education, safety, accessibility, and sustainability using AR/VR and intelligent recommendations to enhance the overall travel experience.',
+      Tech: 'Tech Stack: React, APIs (Gemini API, Google Maps API)',
       img: '/pic/vr.png',
       link: 'https://tripplanner-amber.vercel.app/',
       images: [
@@ -244,9 +289,9 @@ function App() {
     {
       id: 2,
       title: 'Herbious',
-      description: 'Herbious for learn herbs and we can see plants in VR view.',
-      details: 'Developing a web application for exploring medicinal plants and promoting health literacy',
-      Tech: 'Tech Stack: HTML ,CSS, JS,PHP and MySQL',
+      description: 'Herbious for learning herbs with VR views of medicinal plants.',
+      details: 'Developing a web application for exploring medicinal plants and promoting health literacy through 3D models and interactive botanical guides.',
+      Tech: 'Tech Stack: HTML, CSS, JS, PHP, MySQL',
       img: '/pic/harb.png',
       link: 'https://herbours.netlify.app/',
       images: [
@@ -259,9 +304,9 @@ function App() {
     {
       id: 3,
       title: 'EventHub',
-      description: 'EventHub is a smart student event registration platform for exploring events',
+      description: 'Smart student event registration platform for college events.',
       details: 'EventHub is a smart student event registration platform for exploring and joining technical, non-technical, and cultural college events. It provides secure online registration with auto-generated QR code digital tickets for fast and verified event entry.',
-      Tech: 'tech stack:Frontend: React.js,Backend: Node.js with Express,Database: Firebase (Firestore)',
+      Tech: 'Tech Stack: React.js, Node.js with Express, Firebase (Firestore)',
       img: '/pic/event 1.png',
       link: 'https://event-college.vercel.app/',
       images: [
@@ -273,22 +318,11 @@ function App() {
     }
   ];
 
-  const [selectedProject, setSelectedProject] = useState(null);
-
-  // Close modal on escape key
-  useEffect(() => {
-    const handleEsc = (e) => {
-      if (e.key === 'Escape') setSelectedProject(null);
-    };
-    window.addEventListener('keydown', handleEsc);
-    return () => window.removeEventListener('keydown', handleEsc);
-  }, []);
-
   return (
     <>
       <header className="navbar">
         <div className="logo">Kamaraj</div>
-        <div className={`nav-links ${isNavOpen ? 'open' : ''}`} ref={navLinksRef}>
+        <div className={`nav-links ${isNavOpen ? 'open' : ''}`} ref={navLinksRef} id="nav-menu">
           <div className="nav-indicator" style={{ left: `${indicatorStyle.left}px`, width: `${indicatorStyle.width}px` }}></div>
           <a href="#home" className={`nav-item ${activeSection === 'home' ? 'active' : ''}`} onClick={() => setIsNavOpen(false)}>Home</a>
           <a href="#about" className={`nav-item ${activeSection === 'about' ? 'active' : ''}`} onClick={() => setIsNavOpen(false)}>About</a>
@@ -296,7 +330,13 @@ function App() {
           <a href="#projects" className={`nav-item ${activeSection === 'projects' ? 'active' : ''}`} onClick={() => setIsNavOpen(false)}>Projects</a>
           <a href="#contact" className={`nav-item ${activeSection === 'contact' ? 'active' : ''}`} onClick={() => setIsNavOpen(false)}>Contact</a>
         </div>
-        <button className="hamburger" onClick={toggleNav} aria-label="Toggle Menu">
+        <button
+          className="hamburger"
+          onClick={toggleNav}
+          aria-label="Toggle Menu"
+          aria-expanded={isNavOpen}
+          aria-controls="nav-menu"
+        >
           {isNavOpen ? '✕' : '☰'}
         </button>
       </header>
@@ -310,7 +350,7 @@ function App() {
             style={{ willChange: 'transform' }}
           >
             <TiltCard className="profile">
-              <img src="/pic/kamaraj.png" alt="Profile" />
+              <img src="/pic/kamaraj.png" alt="Kamaraj Profile Picture" />
             </TiltCard>
           </div>
           <div
@@ -324,7 +364,7 @@ function App() {
             </p>
 
             <div className="cta-row fade-in">
-              <a className="btn pulse" href="/file/resume.pdf" download>
+              <a className="btn pulse" href="/file/resume.pdf" download="Kamaraj_Resume.pdf">
                 Download Resume
               </a>
               <a className="btn" href="#projects">View Projects</a>
@@ -341,33 +381,30 @@ function App() {
             <div className="card fade-in">
               <h4>About me</h4>
               <p>I am a college student studying Information Technology. I enjoy building web apps, designing UIs and learning new technologies. I focus on writing maintainable code and creating pleasant UX.</p>
-              <p style={{ marginTop: '14px' }}>Skills: HTML, CSS, JavaScript, Python, React (learning), Responsive Design, Git</p>
+              <p style={{ marginTop: '14px' }}>Skills: HTML, CSS, JavaScript, Python, React, Responsive Design, Git</p>
             </div>
             <div className="card fade-in edu-journey">
               <h4>Education (Journey)</h4>
               <div className="edu-item">
                 <div className="icon">🎓</div>
                 <div>
-                  <h4>B.Tech Information Technology - Knowledge Institute of Technology <small style={{ color: '#bfbfe6' }}>(2025 - present)</small></h4>
+                  <h4>B.Tech Information Technology — Knowledge Institute of Technology <small style={{ color: 'var(--text-muted)' }}>(2025 - present)</small></h4>
                   <p>Focus: Web Development, Data Structures, and Algorithms.</p>
                 </div>
               </div>
               <div className="edu-item">
                 <div className="icon">📜</div>
                 <div>
-                  <h4>Higher Secondary — Sri vidhya mandir matric hr.sec.school <small style={{ color: '#bfbfe6' }}>(2022 - 2022)</small></h4>
+                  <h4>Higher Secondary — Sri vidhya mandir matric hr.sec.school <small style={{ color: 'var(--text-muted)' }}>(2022 - 2024)</small></h4>
                   <p>Focus: Computer Science & Ranked top 10 in class.</p>
                 </div>
               </div>
             </div>
           </div>
 
-          <div style={{ marginTop: '18px' }}>
+          <div style={{ marginTop: '32px' }}>
             <h4 className="section-title">Skills</h4>
             <div className="card">
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', marginBottom: '12px', flexWrap: 'wrap' }}>
-                <h4 style={{ margin: 0 }}> My Skills</h4>
-              </div>
               <div className="tabs" role="tablist" style={{ marginBottom: '14px' }}>
                 <div className="indicator" style={{ transform: `translateX(${['frontend', 'backend', 'tools'].indexOf(activeTab) * 100}%)` }}></div>
                 <button className={`tab ${activeTab === 'frontend' ? 'active' : ''}`} onClick={() => setActiveTab('frontend')} role="tab" aria-selected={activeTab === 'frontend'}>Frontend</button>
@@ -377,55 +414,55 @@ function App() {
               <div className="skill-area">
                 {activeTab === 'frontend' && (
                   <div className="skill-grid" data-panel="frontend">
-                    <div className="skill" title="HTML ">
+                    <div className="skill" title="HTML">
                       <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg" alt="HTML" style={{ width: '36px', height: '36px' }} />
-                      <div className="meta"><strong>HTML</strong><div style={{ fontSize: '12px', color: '#cfcfe8' }}></div></div>
+                      <div className="meta"><strong>HTML</strong></div>
                     </div>
-                    <div className="skill" title="CSS ">
+                    <div className="skill" title="CSS">
                       <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg" alt="CSS" style={{ width: '36px', height: '36px' }} />
-                      <div className="meta"><strong>CSS</strong><div style={{ fontSize: '12px', color: '#cfcfe8' }}></div></div>
+                      <div className="meta"><strong>CSS</strong></div>
                     </div>
-                    <div className="skill" title="JavaScript ">
+                    <div className="skill" title="JavaScript">
                       <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" alt="JS" style={{ width: '36px', height: '36px' }} />
-                      <div className="meta"><strong>JS</strong><div style={{ fontSize: '12px', color: '#cfcfe8' }}></div></div>
+                      <div className="meta"><strong>JS</strong></div>
                     </div>
                     <div className="skill" title="React">
                       <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" alt="React" style={{ width: '36px', height: '36px' }} />
-                      <div className="meta"><strong>React</strong><div style={{ fontSize: '12px', color: '#cfcfe8' }}></div></div>
+                      <div className="meta"><strong>React</strong></div>
                     </div>
                   </div>
                 )}
 
                 {activeTab === 'backend' && (
                   <div className="skill-grid" data-panel="backend">
-                    <div className="skill" title="PHP ">
+                    <div className="skill" title="PHP">
                       <img src="https://devicon-website.vercel.app/api/php/original.svg" alt="PHP" style={{ width: '36px', height: '36px' }} />
-                      <div className="meta"><strong>PHP</strong><div style={{ fontSize: '12px', color: '#cfcfe8' }}></div></div>
+                      <div className="meta"><strong>PHP</strong></div>
                     </div>
                     <div className="skill" title="Node.js">
                       <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" alt="Node.js" style={{ width: '36px', height: '36px' }} />
-                      <div className="meta"><strong>Node.js</strong><div style={{ fontSize: '12px', color: '#cfcfe8' }}></div></div>
+                      <div className="meta"><strong>Node.js</strong></div>
                     </div>
-                    <div className="skill" title="MySQL ">
+                    <div className="skill" title="MySQL">
                       <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg" alt="MySQL" style={{ width: '36px', height: '36px' }} />
-                      <div className="meta"><strong>MySQL</strong><div style={{ fontSize: '12px', color: '#cfcfe8' }}></div></div>
+                      <div className="meta"><strong>MySQL</strong></div>
                     </div>
                   </div>
                 )}
 
                 {activeTab === 'tools' && (
                   <div className="skill-grid" data-panel="tools">
-                    <div className="skill" title="Git ">
+                    <div className="skill" title="Git">
                       <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg" alt="Git" style={{ width: '36px', height: '36px' }} />
-                      <div className="meta"><strong>Git</strong><div style={{ fontSize: '12px', color: '#cfcfe8' }}></div></div>
+                      <div className="meta"><strong>Git</strong></div>
                     </div>
-                    <div className="skill" title="GitHub ">
+                    <div className="skill" title="GitHub">
                       <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" alt="GitHub" style={{ width: '36px', height: '36px' }} />
-                      <div className="meta"><strong>GitHub</strong><div style={{ fontSize: '12px', color: '#cfcfe8' }}></div></div>
+                      <div className="meta"><strong>GitHub</strong></div>
                     </div>
                     <div className="skill" title="VS Code">
                       <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vscode/vscode-original.svg" alt="VS Code" style={{ width: '36px', height: '36px' }} />
-                      <div className="meta"><strong>VS Code</strong><div style={{ fontSize: '12px', color: '#cfcfe8' }}></div></div>
+                      <div className="meta"><strong>VS Code</strong></div>
                     </div>
                   </div>
                 )}
@@ -433,7 +470,6 @@ function App() {
             </div>
           </div>
         </section>
-
 
         <section id="achievements">
           <h3 className="section-title">My Achievements</h3>
@@ -453,16 +489,15 @@ function App() {
                 title: 'BGS Certification',
                 img: '/pic/bgs.jpg',
                 desc: <>I participated in the National Level Hackathon <strong className="text-highlight-blue">"ADVAYA 2K25,"</strong> conducted at BGS College of Engineering & Technology, Bengaluru, on 11–12 April 2025.</>,
-                btnIcon: '🟢', // Simple dot representation
+                btnIcon: '🟢',
                 btnText: 'National Level Hackathon',
                 cardClass: 'achievement-card ach-blue'
               },
               {
                 icon: '🏆',
                 title: 'GravitoHacks – GDG Saveetha',
-                img: 'pic/google.jpg',
+                img: '/pic/google.jpg',
                 desc: <>Thrilled to share that Team Pixelate secured <strong className="text-highlight-blue">2nd place</strong> at GravitoHacks, a hackathon organized by the Google Developer Group (GDG) at Saveetha School of Engineering.</>,
-                btnIcon: 'G', // Replace with an actual Google icon or image if available
                 imgIcon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg',
                 btnText: 'Google GDG Event',
                 cardClass: 'achievement-card ach-dark'
@@ -491,7 +526,7 @@ function App() {
 
                   <button className="ach-btn">
                     {item.imgIcon ? (
-                      <img src={item.imgIcon} alt="icon" className="ach-btn-icon-img" />
+                      <img src={item.imgIcon} alt="Icon" className="ach-btn-icon-img" />
                     ) : item.btnIcon ? (
                       <span className="ach-btn-icon">{item.btnIcon}</span>
                     ) : null}
@@ -520,7 +555,7 @@ function App() {
 
                   <div style={{ display: 'flex', gap: '10px', marginTop: 'auto' }}>
                     <a className="ach-btn" href={project.link} target="_blank" rel="noopener noreferrer">
-                      App
+                      App ↗
                     </a>
                     <button className="ach-btn" onClick={() => setSelectedProject(project)}>
                       Details
@@ -536,6 +571,11 @@ function App() {
           <h3 className="section-title">Contact</h3>
           <div className="card">
             <form id="contact-form" onSubmit={handleSubmit}>
+              {formStatus && (
+                <div className={`form-status ${formStatus.type}`}>
+                  {formStatus.message}
+                </div>
+              )}
               <input
                 type="text"
                 name="name"
@@ -580,18 +620,29 @@ function App() {
 
       {/* Project Details Modal */}
       {selectedProject && (
-        <div className="modal-overlay" onClick={() => setSelectedProject(null)}>
+        <div className="modal-overlay" onClick={() => setSelectedProject(null)} role="dialog" aria-modal="true" aria-labelledby="modal-title">
           <div className="modal-content" onClick={e => e.stopPropagation()}>
-            <button className="modal-close" onClick={() => setSelectedProject(null)}>×</button>
-            <h3 style={{ marginTop: 0, marginBottom: '8px' }}>{selectedProject.title}</h3>
-            <p style={{ color: 'var(--accent1)', marginBottom: '8px' }}><strong>{selectedProject.description}</strong></p>
+            <button className="modal-close" onClick={() => setSelectedProject(null)} aria-label="Close modal">×</button>
+            <h3 id="modal-title" style={{ marginTop: 0, marginBottom: '8px' }}>{selectedProject.title}</h3>
+            <p style={{ color: 'var(--accent-cyan)', marginBottom: '8px' }}><strong>{selectedProject.description}</strong></p>
             <p style={{ marginBottom: '12px', lineHeight: '1.6' }}>{selectedProject.details}</p>
-            {selectedProject.Tech && <p style={{ marginBottom: '12px', color: '#cfcfe8', whiteSpace: 'pre-line' }}>{selectedProject.Tech}</p>}
+            {selectedProject.Tech && <p style={{ marginBottom: '16px', color: 'var(--text-muted)', whiteSpace: 'pre-line' }}>{selectedProject.Tech}</p>}
 
+            {/* Main Preview Image */}
+            <div className="modal-preview">
+              <img src={activeModalImg || selectedProject.img} alt={`${selectedProject.title} Preview`} />
+            </div>
+
+            {/* Interactive Image Thumbnails */}
             <div className="modal-gallery">
               {selectedProject.images.map((img, idx) => (
-                <div key={idx} className="gallery-item">
-                  <img src={img} alt={`${selectedProject.title} - ${idx + 1}`} loading="lazy" />
+                <div
+                  key={idx}
+                  className={`gallery-item ${activeModalImg === img ? 'active' : ''}`}
+                  onClick={() => setActiveModalImg(img)}
+                  title="Click to preview"
+                >
+                  <img src={img} alt={`${selectedProject.title} screenshot ${idx + 1}`} loading="lazy" />
                 </div>
               ))}
             </div>

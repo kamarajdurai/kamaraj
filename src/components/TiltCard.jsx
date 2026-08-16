@@ -1,22 +1,35 @@
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 
 export default function TiltCard({ children, className = '' }) {
     const cardRef = useRef(null);
     const rectRef = useRef(null);
     const rafId = useRef(null);
 
-    const handleMouseEnter = () => {
-        if (cardRef.current) {
-            rectRef.current = cardRef.current.getBoundingClientRect();
-            cardRef.current.style.transition = 'transform 0.1s ease-out';
-            cardRef.current.style.transform = `perspective(1000px) scale3d(1.02, 1.02, 1)`;
+    const [isTouch, setIsTouch] = useState(() => {
+        if (typeof window !== 'undefined' && window.matchMedia) {
+            return window.matchMedia('(hover: none)').matches;
         }
+        return false;
+    });
+
+    useEffect(() => {
+        if (typeof window === 'undefined' || !window.matchMedia) return;
+        const mediaQuery = window.matchMedia('(hover: none)');
+        const handleChange = (e) => setIsTouch(e.matches);
+        mediaQuery.addEventListener('change', handleChange);
+        return () => mediaQuery.removeEventListener('change', handleChange);
+    }, []);
+
+    const handleMouseEnter = () => {
+        if (isTouch || !cardRef.current) return;
+        rectRef.current = cardRef.current.getBoundingClientRect();
+        cardRef.current.style.transition = 'transform 0.1s ease-out';
+        cardRef.current.style.transform = `perspective(1000px) scale3d(1.02, 1.02, 1)`;
     };
 
     const handleMouseMove = (e) => {
-        if (!cardRef.current || !rectRef.current) return;
+        if (isTouch || !cardRef.current || !rectRef.current) return;
 
-        // Debounce/Throttle via RAF
         if (rafId.current) return;
 
         rafId.current = requestAnimationFrame(() => {
@@ -27,7 +40,6 @@ export default function TiltCard({ children, className = '' }) {
             const centerX = rect.width / 2;
             const centerY = rect.height / 2;
 
-            // Limit rotation to small values for performance and subtlety
             const rotateX = ((y - centerY) / centerY) * -8;
             const rotateY = ((x - centerX) / centerX) * 8;
 
@@ -40,18 +52,18 @@ export default function TiltCard({ children, className = '' }) {
     };
 
     const handleMouseLeave = () => {
+        if (isTouch) return;
         if (rafId.current) {
             cancelAnimationFrame(rafId.current);
             rafId.current = null;
         }
         if (cardRef.current) {
-            cardRef.current.style.transition = 'transform 0.5s ease-out'; // Slower smooth return
+            cardRef.current.style.transition = 'transform 0.5s ease-out';
             cardRef.current.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
         }
     };
 
-    // Mobile Optimization: Disable tilt on touch devices
-    if (typeof window !== 'undefined' && window.matchMedia('(hover: none)').matches) {
+    if (isTouch) {
         return <div className={className}>{children}</div>;
     }
 
