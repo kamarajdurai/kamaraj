@@ -278,7 +278,7 @@ function App() {
       details: 'TN-VERSE is a smart tourism platform that combines education, safety, accessibility, and sustainability using AR/VR and intelligent recommendations to enhance the overall travel experience.',
       Tech: 'Tech Stack: React, APIs (Gemini API, Google Maps API)',
       img: '/pic/vr.png',
-      link: 'https://tripplanner-amber.vercel.app/',
+      link: 'https://tnverse.vercel.app/',
       images: [
         '/pic/vr.png',
         '/pic/plan.png',
